@@ -1,3 +1,5 @@
+// lib/domain/models/community_post.dart
+
 class CommunityPost {
   final String id;
   final String userId;
@@ -9,6 +11,9 @@ class CommunityPost {
   final String topEmoji;
   final String bottomEmoji;
   final String shoesEmoji;
+  final String? topImagePath;
+  final String? bottomImagePath;
+  final String? shoesImagePath;
   int likes;
   bool isLiked;
   final List<String> likedBy;
@@ -28,6 +33,9 @@ class CommunityPost {
     required this.topEmoji,
     required this.bottomEmoji,
     required this.shoesEmoji,
+    this.topImagePath,
+    this.bottomImagePath,
+    this.shoesImagePath,
     required this.likes,
     this.isLiked = false,
     this.likedBy = const [],
@@ -52,6 +60,9 @@ class CommunityPost {
       topEmoji: data['topEmoji'] ?? '👕',
       bottomEmoji: data['bottomEmoji'] ?? '👖',
       shoesEmoji: data['shoesEmoji'] ?? '👟',
+      topImagePath: data['topImagePath'],
+      bottomImagePath: data['bottomImagePath'],
+      shoesImagePath: data['shoesImagePath'],
       likes: data['likes'] ?? 0,
       isLiked: currentUserId != null && likedBy.contains(currentUserId),
       likedBy: likedBy,
@@ -73,6 +84,9 @@ class CommunityPost {
       'topEmoji': topEmoji,
       'bottomEmoji': bottomEmoji,
       'shoesEmoji': shoesEmoji,
+      'topImagePath': topImagePath,
+      'bottomImagePath': bottomImagePath,
+      'shoesImagePath': shoesImagePath,
       'likes': likes,
       'likedBy': likedBy,
       'avatarColor': avatarColor,
