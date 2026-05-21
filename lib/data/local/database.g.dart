@@ -505,6 +505,24 @@ class $OutfitsTable extends Outfits with TableInfo<$OutfitsTable, Outfit> {
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant('👟'));
+  static const VerificationMeta _topImagePathMeta =
+      const VerificationMeta('topImagePath');
+  @override
+  late final GeneratedColumn<String> topImagePath = GeneratedColumn<String>(
+      'top_image_path', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _bottomImagePathMeta =
+      const VerificationMeta('bottomImagePath');
+  @override
+  late final GeneratedColumn<String> bottomImagePath = GeneratedColumn<String>(
+      'bottom_image_path', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _shoesImagePathMeta =
+      const VerificationMeta('shoesImagePath');
+  @override
+  late final GeneratedColumn<String> shoesImagePath = GeneratedColumn<String>(
+      'shoes_image_path', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -535,6 +553,9 @@ class $OutfitsTable extends Outfits with TableInfo<$OutfitsTable, Outfit> {
         topEmoji,
         bottomEmoji,
         shoesEmoji,
+        topImagePath,
+        bottomImagePath,
+        shoesImagePath,
         createdAt,
         isFavorite
       ];
@@ -613,6 +634,24 @@ class $OutfitsTable extends Outfits with TableInfo<$OutfitsTable, Outfit> {
           shoesEmoji.isAcceptableOrUnknown(
               data['shoes_emoji']!, _shoesEmojiMeta));
     }
+    if (data.containsKey('top_image_path')) {
+      context.handle(
+          _topImagePathMeta,
+          topImagePath.isAcceptableOrUnknown(
+              data['top_image_path']!, _topImagePathMeta));
+    }
+    if (data.containsKey('bottom_image_path')) {
+      context.handle(
+          _bottomImagePathMeta,
+          bottomImagePath.isAcceptableOrUnknown(
+              data['bottom_image_path']!, _bottomImagePathMeta));
+    }
+    if (data.containsKey('shoes_image_path')) {
+      context.handle(
+          _shoesImagePathMeta,
+          shoesImagePath.isAcceptableOrUnknown(
+              data['shoes_image_path']!, _shoesImagePathMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -658,6 +697,12 @@ class $OutfitsTable extends Outfits with TableInfo<$OutfitsTable, Outfit> {
           .read(DriftSqlType.string, data['${effectivePrefix}bottom_emoji'])!,
       shoesEmoji: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}shoes_emoji'])!,
+      topImagePath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}top_image_path']),
+      bottomImagePath: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}bottom_image_path']),
+      shoesImagePath: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}shoes_image_path']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       isFavorite: attachedDatabase.typeMapping
@@ -684,6 +729,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
   final String topEmoji;
   final String bottomEmoji;
   final String shoesEmoji;
+  final String? topImagePath;
+  final String? bottomImagePath;
+  final String? shoesImagePath;
   final DateTime createdAt;
   final bool isFavorite;
   const Outfit(
@@ -699,6 +747,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
       required this.topEmoji,
       required this.bottomEmoji,
       required this.shoesEmoji,
+      this.topImagePath,
+      this.bottomImagePath,
+      this.shoesImagePath,
       required this.createdAt,
       required this.isFavorite});
   @override
@@ -718,6 +769,15 @@ class Outfit extends DataClass implements Insertable<Outfit> {
     map['top_emoji'] = Variable<String>(topEmoji);
     map['bottom_emoji'] = Variable<String>(bottomEmoji);
     map['shoes_emoji'] = Variable<String>(shoesEmoji);
+    if (!nullToAbsent || topImagePath != null) {
+      map['top_image_path'] = Variable<String>(topImagePath);
+    }
+    if (!nullToAbsent || bottomImagePath != null) {
+      map['bottom_image_path'] = Variable<String>(bottomImagePath);
+    }
+    if (!nullToAbsent || shoesImagePath != null) {
+      map['shoes_image_path'] = Variable<String>(shoesImagePath);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['is_favorite'] = Variable<bool>(isFavorite);
     return map;
@@ -739,6 +799,15 @@ class Outfit extends DataClass implements Insertable<Outfit> {
       topEmoji: Value(topEmoji),
       bottomEmoji: Value(bottomEmoji),
       shoesEmoji: Value(shoesEmoji),
+      topImagePath: topImagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(topImagePath),
+      bottomImagePath: bottomImagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bottomImagePath),
+      shoesImagePath: shoesImagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shoesImagePath),
       createdAt: Value(createdAt),
       isFavorite: Value(isFavorite),
     );
@@ -760,6 +829,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
       topEmoji: serializer.fromJson<String>(json['topEmoji']),
       bottomEmoji: serializer.fromJson<String>(json['bottomEmoji']),
       shoesEmoji: serializer.fromJson<String>(json['shoesEmoji']),
+      topImagePath: serializer.fromJson<String?>(json['topImagePath']),
+      bottomImagePath: serializer.fromJson<String?>(json['bottomImagePath']),
+      shoesImagePath: serializer.fromJson<String?>(json['shoesImagePath']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
     );
@@ -780,6 +852,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
       'topEmoji': serializer.toJson<String>(topEmoji),
       'bottomEmoji': serializer.toJson<String>(bottomEmoji),
       'shoesEmoji': serializer.toJson<String>(shoesEmoji),
+      'topImagePath': serializer.toJson<String?>(topImagePath),
+      'bottomImagePath': serializer.toJson<String?>(bottomImagePath),
+      'shoesImagePath': serializer.toJson<String?>(shoesImagePath),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'isFavorite': serializer.toJson<bool>(isFavorite),
     };
@@ -798,6 +873,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
           String? topEmoji,
           String? bottomEmoji,
           String? shoesEmoji,
+          Value<String?> topImagePath = const Value.absent(),
+          Value<String?> bottomImagePath = const Value.absent(),
+          Value<String?> shoesImagePath = const Value.absent(),
           DateTime? createdAt,
           bool? isFavorite}) =>
       Outfit(
@@ -813,6 +891,13 @@ class Outfit extends DataClass implements Insertable<Outfit> {
         topEmoji: topEmoji ?? this.topEmoji,
         bottomEmoji: bottomEmoji ?? this.bottomEmoji,
         shoesEmoji: shoesEmoji ?? this.shoesEmoji,
+        topImagePath:
+            topImagePath.present ? topImagePath.value : this.topImagePath,
+        bottomImagePath: bottomImagePath.present
+            ? bottomImagePath.value
+            : this.bottomImagePath,
+        shoesImagePath:
+            shoesImagePath.present ? shoesImagePath.value : this.shoesImagePath,
         createdAt: createdAt ?? this.createdAt,
         isFavorite: isFavorite ?? this.isFavorite,
       );
@@ -834,6 +919,15 @@ class Outfit extends DataClass implements Insertable<Outfit> {
           data.bottomEmoji.present ? data.bottomEmoji.value : this.bottomEmoji,
       shoesEmoji:
           data.shoesEmoji.present ? data.shoesEmoji.value : this.shoesEmoji,
+      topImagePath: data.topImagePath.present
+          ? data.topImagePath.value
+          : this.topImagePath,
+      bottomImagePath: data.bottomImagePath.present
+          ? data.bottomImagePath.value
+          : this.bottomImagePath,
+      shoesImagePath: data.shoesImagePath.present
+          ? data.shoesImagePath.value
+          : this.shoesImagePath,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       isFavorite:
           data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
@@ -855,6 +949,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
           ..write('topEmoji: $topEmoji, ')
           ..write('bottomEmoji: $bottomEmoji, ')
           ..write('shoesEmoji: $shoesEmoji, ')
+          ..write('topImagePath: $topImagePath, ')
+          ..write('bottomImagePath: $bottomImagePath, ')
+          ..write('shoesImagePath: $shoesImagePath, ')
           ..write('createdAt: $createdAt, ')
           ..write('isFavorite: $isFavorite')
           ..write(')'))
@@ -875,6 +972,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
       topEmoji,
       bottomEmoji,
       shoesEmoji,
+      topImagePath,
+      bottomImagePath,
+      shoesImagePath,
       createdAt,
       isFavorite);
   @override
@@ -893,6 +993,9 @@ class Outfit extends DataClass implements Insertable<Outfit> {
           other.topEmoji == this.topEmoji &&
           other.bottomEmoji == this.bottomEmoji &&
           other.shoesEmoji == this.shoesEmoji &&
+          other.topImagePath == this.topImagePath &&
+          other.bottomImagePath == this.bottomImagePath &&
+          other.shoesImagePath == this.shoesImagePath &&
           other.createdAt == this.createdAt &&
           other.isFavorite == this.isFavorite);
 }
@@ -910,6 +1013,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
   final Value<String> topEmoji;
   final Value<String> bottomEmoji;
   final Value<String> shoesEmoji;
+  final Value<String?> topImagePath;
+  final Value<String?> bottomImagePath;
+  final Value<String?> shoesImagePath;
   final Value<DateTime> createdAt;
   final Value<bool> isFavorite;
   final Value<int> rowid;
@@ -926,6 +1032,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
     this.topEmoji = const Value.absent(),
     this.bottomEmoji = const Value.absent(),
     this.shoesEmoji = const Value.absent(),
+    this.topImagePath = const Value.absent(),
+    this.bottomImagePath = const Value.absent(),
+    this.shoesImagePath = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -943,6 +1052,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
     this.topEmoji = const Value.absent(),
     this.bottomEmoji = const Value.absent(),
     this.shoesEmoji = const Value.absent(),
+    this.topImagePath = const Value.absent(),
+    this.bottomImagePath = const Value.absent(),
+    this.shoesImagePath = const Value.absent(),
     required DateTime createdAt,
     this.isFavorite = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -965,6 +1077,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
     Expression<String>? topEmoji,
     Expression<String>? bottomEmoji,
     Expression<String>? shoesEmoji,
+    Expression<String>? topImagePath,
+    Expression<String>? bottomImagePath,
+    Expression<String>? shoesImagePath,
     Expression<DateTime>? createdAt,
     Expression<bool>? isFavorite,
     Expression<int>? rowid,
@@ -982,6 +1097,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
       if (topEmoji != null) 'top_emoji': topEmoji,
       if (bottomEmoji != null) 'bottom_emoji': bottomEmoji,
       if (shoesEmoji != null) 'shoes_emoji': shoesEmoji,
+      if (topImagePath != null) 'top_image_path': topImagePath,
+      if (bottomImagePath != null) 'bottom_image_path': bottomImagePath,
+      if (shoesImagePath != null) 'shoes_image_path': shoesImagePath,
       if (createdAt != null) 'created_at': createdAt,
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (rowid != null) 'rowid': rowid,
@@ -1001,6 +1119,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
       Value<String>? topEmoji,
       Value<String>? bottomEmoji,
       Value<String>? shoesEmoji,
+      Value<String?>? topImagePath,
+      Value<String?>? bottomImagePath,
+      Value<String?>? shoesImagePath,
       Value<DateTime>? createdAt,
       Value<bool>? isFavorite,
       Value<int>? rowid}) {
@@ -1017,6 +1138,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
       topEmoji: topEmoji ?? this.topEmoji,
       bottomEmoji: bottomEmoji ?? this.bottomEmoji,
       shoesEmoji: shoesEmoji ?? this.shoesEmoji,
+      topImagePath: topImagePath ?? this.topImagePath,
+      bottomImagePath: bottomImagePath ?? this.bottomImagePath,
+      shoesImagePath: shoesImagePath ?? this.shoesImagePath,
       createdAt: createdAt ?? this.createdAt,
       isFavorite: isFavorite ?? this.isFavorite,
       rowid: rowid ?? this.rowid,
@@ -1062,6 +1186,15 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
     if (shoesEmoji.present) {
       map['shoes_emoji'] = Variable<String>(shoesEmoji.value);
     }
+    if (topImagePath.present) {
+      map['top_image_path'] = Variable<String>(topImagePath.value);
+    }
+    if (bottomImagePath.present) {
+      map['bottom_image_path'] = Variable<String>(bottomImagePath.value);
+    }
+    if (shoesImagePath.present) {
+      map['shoes_image_path'] = Variable<String>(shoesImagePath.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1089,6 +1222,9 @@ class OutfitsCompanion extends UpdateCompanion<Outfit> {
           ..write('topEmoji: $topEmoji, ')
           ..write('bottomEmoji: $bottomEmoji, ')
           ..write('shoesEmoji: $shoesEmoji, ')
+          ..write('topImagePath: $topImagePath, ')
+          ..write('bottomImagePath: $bottomImagePath, ')
+          ..write('shoesImagePath: $shoesImagePath, ')
           ..write('createdAt: $createdAt, ')
           ..write('isFavorite: $isFavorite, ')
           ..write('rowid: $rowid')
@@ -1617,6 +1753,9 @@ typedef $$OutfitsTableCreateCompanionBuilder = OutfitsCompanion Function({
   Value<String> topEmoji,
   Value<String> bottomEmoji,
   Value<String> shoesEmoji,
+  Value<String?> topImagePath,
+  Value<String?> bottomImagePath,
+  Value<String?> shoesImagePath,
   required DateTime createdAt,
   Value<bool> isFavorite,
   Value<int> rowid,
@@ -1634,6 +1773,9 @@ typedef $$OutfitsTableUpdateCompanionBuilder = OutfitsCompanion Function({
   Value<String> topEmoji,
   Value<String> bottomEmoji,
   Value<String> shoesEmoji,
+  Value<String?> topImagePath,
+  Value<String?> bottomImagePath,
+  Value<String?> shoesImagePath,
   Value<DateTime> createdAt,
   Value<bool> isFavorite,
   Value<int> rowid,
@@ -1683,6 +1825,17 @@ class $$OutfitsTableFilterComposer
 
   ColumnFilters<String> get shoesEmoji => $composableBuilder(
       column: $table.shoesEmoji, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get topImagePath => $composableBuilder(
+      column: $table.topImagePath, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bottomImagePath => $composableBuilder(
+      column: $table.bottomImagePath,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get shoesImagePath => $composableBuilder(
+      column: $table.shoesImagePath,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -1736,6 +1889,18 @@ class $$OutfitsTableOrderingComposer
   ColumnOrderings<String> get shoesEmoji => $composableBuilder(
       column: $table.shoesEmoji, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get topImagePath => $composableBuilder(
+      column: $table.topImagePath,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get bottomImagePath => $composableBuilder(
+      column: $table.bottomImagePath,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get shoesImagePath => $composableBuilder(
+      column: $table.shoesImagePath,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -1788,6 +1953,15 @@ class $$OutfitsTableAnnotationComposer
   GeneratedColumn<String> get shoesEmoji => $composableBuilder(
       column: $table.shoesEmoji, builder: (column) => column);
 
+  GeneratedColumn<String> get topImagePath => $composableBuilder(
+      column: $table.topImagePath, builder: (column) => column);
+
+  GeneratedColumn<String> get bottomImagePath => $composableBuilder(
+      column: $table.bottomImagePath, builder: (column) => column);
+
+  GeneratedColumn<String> get shoesImagePath => $composableBuilder(
+      column: $table.shoesImagePath, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -1830,6 +2004,9 @@ class $$OutfitsTableTableManager extends RootTableManager<
             Value<String> topEmoji = const Value.absent(),
             Value<String> bottomEmoji = const Value.absent(),
             Value<String> shoesEmoji = const Value.absent(),
+            Value<String?> topImagePath = const Value.absent(),
+            Value<String?> bottomImagePath = const Value.absent(),
+            Value<String?> shoesImagePath = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<bool> isFavorite = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -1847,6 +2024,9 @@ class $$OutfitsTableTableManager extends RootTableManager<
             topEmoji: topEmoji,
             bottomEmoji: bottomEmoji,
             shoesEmoji: shoesEmoji,
+            topImagePath: topImagePath,
+            bottomImagePath: bottomImagePath,
+            shoesImagePath: shoesImagePath,
             createdAt: createdAt,
             isFavorite: isFavorite,
             rowid: rowid,
@@ -1864,6 +2044,9 @@ class $$OutfitsTableTableManager extends RootTableManager<
             Value<String> topEmoji = const Value.absent(),
             Value<String> bottomEmoji = const Value.absent(),
             Value<String> shoesEmoji = const Value.absent(),
+            Value<String?> topImagePath = const Value.absent(),
+            Value<String?> bottomImagePath = const Value.absent(),
+            Value<String?> shoesImagePath = const Value.absent(),
             required DateTime createdAt,
             Value<bool> isFavorite = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -1881,6 +2064,9 @@ class $$OutfitsTableTableManager extends RootTableManager<
             topEmoji: topEmoji,
             bottomEmoji: bottomEmoji,
             shoesEmoji: shoesEmoji,
+            topImagePath: topImagePath,
+            bottomImagePath: bottomImagePath,
+            shoesImagePath: shoesImagePath,
             createdAt: createdAt,
             isFavorite: isFavorite,
             rowid: rowid,

@@ -1,9 +1,13 @@
+// lib/data/remote/firestore_service.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../domain/models/community_post.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // ─── Posts ───────────────────────────────────────────────────────────────
 
   Stream<List<CommunityPost>> watchPosts(String? currentUserId) {
     return _db
@@ -44,6 +48,17 @@ class FirestoreService {
       await docRef.update(data);
     }
   }
+
+  Future<void> deletePost(String postId) async {
+    final docRef = _db.collection('posts').doc(postId);
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      await Future.microtask(() => docRef.delete());
+    } else {
+      await docRef.delete();
+    }
+  }
+
+  // ─── Users ───────────────────────────────────────────────────────────────
 
   Future<void> createOrUpdateUser({
     required String userId,

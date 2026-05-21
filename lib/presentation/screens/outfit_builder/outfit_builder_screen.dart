@@ -347,7 +347,6 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    // ✅ Show photo if available
                                     ClothingItemThumbnail(
                                       imagePath: item.imagePath,
                                       emoji: item.emoji,
