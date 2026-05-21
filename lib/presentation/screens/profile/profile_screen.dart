@@ -1,12 +1,9 @@
-// lib/presentation/screens/profile/profile_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/models/community_post.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/community_provider.dart';
 import '../../providers/database_provider.dart';
-import '../../providers/theme_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -16,12 +13,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  bool _notificationsOn = true;
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
-    final isDarkMode = ref.watch(themeProvider);
     final itemsAsync = ref.watch(clothingItemsProvider);
     final outfitsAsync = ref.watch(outfitsProvider);
     final communityPostsAsync = ref.watch(communityPostsProvider);
@@ -182,122 +176,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
-
-  void _showSettings(BuildContext context, bool isDarkMode) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          decoration: const BoxDecoration(
-            color: Color(0xFFFAF8F5),
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(28)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Center(
-                child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius:
-                            BorderRadius.circular(2))),
-              ),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text('Settings',
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600)),
-              ),
-              _SettingsSection(title: 'Appearance', children: [
-                _SettingsTile(
-                  icon: Icons.dark_mode_outlined,
-                  title: 'Dark Mode',
-                  trailing: Switch(
-                    value: isDarkMode,
-                    activeThumbColor: const Color(0xFFB8A9C9),
-                    onChanged: (v) {
-                      ref
-                          .read(themeProvider.notifier)
-                          .toggle();
-                      setModalState(() {});
-                    },
-                  ),
-                ),
-                _SettingsTile(
-                  icon: Icons.palette_outlined,
-                  title: 'Theme Color',
-                  trailing: Row(children: [
-                    const Text('Lavender',
-                        style: TextStyle(
-                            color: Color(0xFFB8A9C9))),
-                    Container(
-                        width: 18,
-                        height: 18,
-                        margin: const EdgeInsets.only(left: 8),
-                        decoration: const BoxDecoration(
-                            color: Color(0xFFB8A9C9),
-                            shape: BoxShape.circle)),
-                  ]),
-                ),
-              ]),
-              _SettingsSection(
-                  title: 'Preferences',
-                  children: [
-                    const _SettingsTile(
-                      icon: Icons.thermostat_outlined,
-                      title: 'Temperature Unit',
-                      trailing: Text('°C',
-                          style: TextStyle(
-                              color: Colors.grey)),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.notifications_outlined,
-                      title: 'Notifications',
-                      trailing: Switch(
-                        value: _notificationsOn,
-                        activeThumbColor: const Color(0xFFB8A9C9),
-                        onChanged: (v) => setModalState(
-                            () => _notificationsOn = v),
-                      ),
-                    ),
-                  ]),
-              _SettingsSection(title: 'Account', children: [
-                const _SettingsTile(
-                  icon: Icons.cloud_sync_outlined,
-                  title: 'Cloud Sync',
-                  trailing: Text('On',
-                      style: TextStyle(
-                          color: Color(0xFFB8A9C9))),
-                ),
-                _SettingsTile(
-                  icon: Icons.logout_rounded,
-                  title: 'Log Out',
-                  titleColor: Colors.redAccent,
-                  trailing: const Icon(
-                      Icons.chevron_right_rounded,
-                      color: Colors.grey),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await ref
-                        .read(authNotifierProvider.notifier)
-                        .signOut();
-                  },
-                ),
-              ]),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _StatBadge extends StatelessWidget {
@@ -410,67 +288,6 @@ class _EmptySection extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _SettingsSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const _SettingsSection(
-      {required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8)),
-          const SizedBox(height: 6),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14)),
-            child: Column(children: children),
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Widget trailing;
-  final Color titleColor;
-  final VoidCallback? onTap;
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.trailing,
-    this.titleColor = const Color(0xFF2D2D2D),
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: const Color(0xFFB8A9C9), size: 22),
-      title: Text(title,
-          style: TextStyle(fontSize: 14, color: titleColor)),
-      trailing: trailing,
-      dense: true,
     );
   }
 }
