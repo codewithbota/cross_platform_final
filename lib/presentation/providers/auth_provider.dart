@@ -17,7 +17,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> signIn(String email, String password) async {
     state = const AsyncValue.loading();
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -27,7 +28,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> register(String email, String password) async {
     state = const AsyncValue.loading();
     try {
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -60,4 +62,5 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
 }
 
 final authNotifierProvider =
-    StateNotifierProvider<AuthNotifier, AsyncValue<void>>((_) => AuthNotifier());
+    StateNotifierProvider<AuthNotifier, AsyncValue<void>>(
+      (_) => AuthNotifier());

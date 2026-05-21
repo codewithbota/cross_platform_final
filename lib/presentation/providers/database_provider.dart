@@ -7,14 +7,14 @@ import '../../domain/models/clothing_item.dart';
 import '../../domain/models/outfit.dart';
 import '../../domain/repositories/clothing_repository.dart';
 
-// ─── Database singleton ───────────────────────────────────────────────────────
+//Database singleton 
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
   ref.onDispose(db.close);
   return db;
 });
 
-// ─── Clothing ─────────────────────────────────────────────────────────────────
+//Clothing 
 final clothingRepositoryProvider = Provider<ClothingRepository>((ref) {
   return ClothingRepositoryImpl(ref.watch(databaseProvider));
 });
@@ -23,7 +23,7 @@ final clothingItemsProvider = StreamProvider<List<ClothingItem>>((ref) {
   return ref.watch(clothingRepositoryProvider).watchAllItems();
 });
 
-// ─── Outfits (из Drift) ───────────────────────────────────────────────────────
+//Outfits (from Drift)
 final outfitsProvider = StreamProvider<List<Outfit>>((ref) {
   final db = ref.watch(databaseProvider);
   return db.outfitDao.watchAllOutfits().map((rows) => rows
@@ -42,11 +42,14 @@ final outfitsProvider = StreamProvider<List<Outfit>>((ref) {
             topEmoji: r.topEmoji,
             bottomEmoji: r.bottomEmoji,
             shoesEmoji: r.shoesEmoji,
+            topImagePath: r.topImagePath,
+            bottomImagePath: r.bottomImagePath,
+            shoesImagePath: r.shoesImagePath,
           ))
       .toList());
 });
 
-// ─── Firestore / Community ────────────────────────────────────────────────────
+//Firestore / Community 
 final firestoreServiceProvider =
     Provider<FirestoreService>((_) => FirestoreService());
 
