@@ -7,6 +7,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/weather_provider.dart';
 import '../../widgets/outfit_card.dart';
+import '../../widgets/clothing_item_thumbnail.dart';
 import '../../../domain/models/clothing_item.dart';
 import '../../../domain/models/outfit.dart';
 import '../../../domain/models/weather_model.dart';
@@ -162,6 +163,9 @@ Outfit? _buildTodayOutfit(
     topEmoji: selectedTop.emoji,
     bottomEmoji: selectedBottom.emoji,
     shoesEmoji: selectedShoes.emoji,
+    topImagePath: selectedTop.imagePath,
+    bottomImagePath: selectedBottom.imagePath,
+    shoesImagePath: selectedShoes.imagePath,
   );
 }
 
@@ -368,10 +372,10 @@ class _TodayOutfitCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _OutfitPiece(emoji: outfit.topEmoji, label: outfit.top),
-              _OutfitPiece(
+              _OutfitPiece(imagePath: outfit.topImagePath, emoji: outfit.topEmoji, label: outfit.top),
+              _OutfitPiece(imagePath: outfit.bottomImagePath,
                   emoji: outfit.bottomEmoji, label: outfit.bottom),
-              _OutfitPiece(
+              _OutfitPiece(imagePath: outfit.shoesImagePath,
                   emoji: outfit.shoesEmoji, label: outfit.shoes),
             ],
           ),
@@ -382,24 +386,21 @@ class _TodayOutfitCard extends StatelessWidget {
 }
 
 class _OutfitPiece extends StatelessWidget {
+  final String? imagePath;
   final String emoji;
   final String label;
-  const _OutfitPiece({required this.emoji, required this.label});
+  const _OutfitPiece({this.imagePath, required this.emoji, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F0F8),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-              child:
-                  Text(emoji, style: const TextStyle(fontSize: 32))),
+        // ✅ Show real photo if available, fall back to emoji
+        ClothingItemThumbnail(
+          imagePath: imagePath,
+          emoji: emoji,
+          size: 64,
+          borderRadius: 16,
         ),
         const SizedBox(height: 6),
         SizedBox(
@@ -541,7 +542,115 @@ class _SectionTitle extends StatelessWidget {
                 fontSize: 18, fontWeight: FontWeight.w600)),
         if (showSeeAll)
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => DraggableScrollableSheet(
+                  initialChildSize: 0.85,
+                  minChildSize: 0.5,
+                  maxChildSize: 0.95,
+                  builder: (_, controller) => Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFAF8F5),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(28),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'My Outfits',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Consumer(builder: (context, ref, _) {
+                            final outfitsAsync = ref.watch(outfitsProvider);
+                            return outfitsAsync.when(
+                              data: (outfits) => outfits.isEmpty
+                                  ? const Center(
+                                      child: Text('No outfits yet'),
+                                    )
+                                  : GridView.builder(
+                                      controller: controller,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 12,
+                                        childAspectRatio: 0.75,
+                                      ),
+                                      itemCount: outfits.length,
+                                      itemBuilder: (context, i) => OutfitCard(
+                                          outfit: outfits[i],
+                                          onDelete: () async {
+                                            final confirmed = await showDialog<bool>(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    title: const Text('Delete outfit'),
+                                                    content: const Text('Delete this outfit from your closet?'),
+                                                    actions: [
+                                                      TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+                                                      TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Delete')),
+                                                    ],
+                                                  ),
+                                                ) ??
+                                                false;
+                                            if (!confirmed) return;
+                                            try {
+                                              await ref.read(databaseProvider).outfitDao.deleteOutfit(outfits[i].id);
+                                              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Outfit deleted')));
+                                            } catch (e) {
+                                              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
+                                            }
+                                          }),
+                                    ),
+                              loading: () =>
+                                  const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                              error: (_, __) =>
+                                  const Center(
+                                    child: Text('Error loading outfits'),
+                                  ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
             child: const Text('See all',
                 style: TextStyle(
                     color: Color(0xFF8B7BA8), fontSize: 13)),

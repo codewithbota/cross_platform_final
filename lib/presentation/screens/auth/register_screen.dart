@@ -1,3 +1,5 @@
+// lib/presentation/screens/auth/register_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +40,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (state.hasError && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(notifier.getErrorMessage(state.error!) ?? 'Ошибка'),
+            content:
+                Text(notifier.getErrorMessage(state.error!) ?? 'Ошибка'),
             backgroundColor: Colors.redAccent),
       );
     }
@@ -60,7 +63,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               const Text('✨', style: TextStyle(fontSize: 52)),
               const SizedBox(height: 16),
               const Text('Create account',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 6),
               Text('Start building your digital closet',
                   style: TextStyle(color: Colors.grey[500], fontSize: 15)),
@@ -112,7 +116,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               color: Colors.white, strokeWidth: 2))
                       : const Text('Create Account',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600)),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -140,7 +145,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget _label(String text) => Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(text,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 14)),
       );
 
   Widget _field({

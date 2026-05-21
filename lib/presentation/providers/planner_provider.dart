@@ -34,14 +34,18 @@ class WeekPlanNotifier
   }
 
   Future<void> _ensureWeekExists(DateTime monday) async {
+    // Create 7 entries for this week if they don't exist
     for (int i = 0; i < 7; i++) {
-      final day = DateTime(monday.year, monday.month, monday.day + i);
+      final day = DateTime(
+          monday.year, monday.month, monday.day + i);
       try {
         await _db.plannerDao.upsertEntry(local_db.PlannerEntriesCompanion.insert(
           id: _uuid.v4(),
           date: day,
         ));
-      } catch (_) {}
+      } catch (_) {
+        // Entry already exists — skip
+      }
     }
   }
 

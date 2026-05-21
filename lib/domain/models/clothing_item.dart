@@ -1,10 +1,10 @@
 class ClothingItem {
   final String id;
   final String name;
-  final String category; // Tops / Bottoms / Shoes / Bags / Accessories / Outerwear
+  final String category; 
   final String color;
-  final String season; // Spring / Summer / Fall / Winter / All
-  final String? imagePath;
+  final String season; 
+  final String? imagePath; 
   final String? notes;
   final String emoji;
 

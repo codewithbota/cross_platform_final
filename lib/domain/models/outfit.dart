@@ -15,6 +15,9 @@ class Outfit {
   final String topEmoji;
   final String bottomEmoji;
   final String shoesEmoji;
+  final String? topImagePath;
+  final String? bottomImagePath;
+  final String? shoesImagePath;
 
   Outfit({
     required this.id,
@@ -32,6 +35,9 @@ class Outfit {
     this.topEmoji = '👕',
     this.bottomEmoji = '👖',
     this.shoesEmoji = '👟',
+    this.topImagePath,
+    this.bottomImagePath,
+    this.shoesImagePath,
   });
 
   Outfit copyWith({bool? isFavorite}) {
@@ -51,6 +57,9 @@ class Outfit {
       topEmoji: topEmoji,
       bottomEmoji: bottomEmoji,
       shoesEmoji: shoesEmoji,
+      topImagePath: topImagePath,
+      bottomImagePath: bottomImagePath,
+      shoesImagePath: shoesImagePath,
     );
   }
 }

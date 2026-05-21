@@ -1,3 +1,5 @@
+// lib/presentation/screens/auth/login_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -51,10 +53,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const Text('👗', style: TextStyle(fontSize: 52)),
               const SizedBox(height: 16),
               const Text('Welcome back',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 6),
               Text('Sign in to your closet',
-                  style: TextStyle(color: Colors.grey[500], fontSize: 15)),
+                  style: TextStyle(
+                      color: Colors.grey[500], fontSize: 15)),
               const SizedBox(height: 36),
               _label('Email'),
               _field(
@@ -97,7 +101,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: Colors.white, strokeWidth: 2))
                       : const Text('Sign In',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600)),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -125,7 +130,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _label(String text) => Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(text,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 14)),
       );
 
   Widget _field({

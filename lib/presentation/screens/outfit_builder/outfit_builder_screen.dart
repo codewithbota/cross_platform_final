@@ -1,5 +1,3 @@
-// lib/presentation/screens/outfit_builder/outfit_builder_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +6,7 @@ import 'package:drift/drift.dart' show Value;
 import '../../../data/local/database.dart' as local_db;
 import '../../../domain/models/clothing_item.dart';
 import '../../providers/database_provider.dart';
+import '../../widgets/clothing_item_thumbnail.dart';
 
 class OutfitBuilderScreen extends ConsumerStatefulWidget {
   const OutfitBuilderScreen({super.key});
@@ -72,6 +71,9 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
         topEmoji: Value(top.emoji),
         bottomEmoji: Value(bottom.emoji),
         shoesEmoji: Value(shoes.emoji),
+        topImagePath: Value(top.imagePath),
+        bottomImagePath: Value(bottom.imagePath),
+        shoesImagePath: Value(shoes.imagePath),
         createdAt: Value(DateTime.now()),
       ));
 
@@ -213,7 +215,6 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
             ),
           ),
 
-          // Selected item preview
           if (_selected[_step] != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -225,8 +226,12 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
                     borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
-                    Text(_selected[_step]!.emoji,
-                        style: const TextStyle(fontSize: 24)),
+                    ClothingItemThumbnail(
+                      imagePath: _selected[_step]!.imagePath,
+                      emoji: _selected[_step]!.emoji,
+                      size: 40,
+                      borderRadius: 8,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                         child: Text(_selected[_step]!.name,
@@ -270,7 +275,6 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
 
           const SizedBox(height: 8),
 
-          // Grid
           Expanded(
             child: itemsAsync.when(
               data: (all) {
@@ -304,7 +308,7 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
                     crossAxisCount: 3,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.9, 
+                    childAspectRatio: 0.85,
                   ),
                   itemCount: items.length,
                   itemBuilder: (context, i) {
@@ -340,19 +344,22 @@ class _OutfitBuilderScreenState extends ConsumerState<OutfitBuilderScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(6),
                                 child: Column(
-                                  mainAxisSize: MainAxisSize.min, 
+                                  mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(item.emoji,
-                                        style: const TextStyle(
-                                            fontSize: 28)), 
+                                    ClothingItemThumbnail(
+                                      imagePath: item.imagePath,
+                                      emoji: item.emoji,
+                                      size: 64,
+                                      borderRadius: 10,
+                                    ),
                                     const SizedBox(height: 4),
                                     Text(item.name,
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                            fontSize: 10, 
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w500)),
                                   ],
                                 ),

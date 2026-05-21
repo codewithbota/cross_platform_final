@@ -35,6 +35,9 @@ class Outfits extends Table {
   TextColumn get topEmoji => text().withDefault(const Constant('👕'))();
   TextColumn get bottomEmoji => text().withDefault(const Constant('👖'))();
   TextColumn get shoesEmoji => text().withDefault(const Constant('👟'))();
+  TextColumn get topImagePath => text().nullable()();
+  TextColumn get bottomImagePath => text().nullable()();
+  TextColumn get shoesImagePath => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
 
@@ -62,5 +65,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(LazyDatabase(() async => openDatabaseConnection()));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2; 
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            // Add the three new image path columns to existing Outfits table
+            await m.addColumn(outfits, outfits.topImagePath as GeneratedColumn<Object>);
+            await m.addColumn(outfits, outfits.bottomImagePath as GeneratedColumn<Object>);
+            await m.addColumn(outfits, outfits.shoesImagePath as GeneratedColumn<Object>);
+          }
+        },
+      );
 }
