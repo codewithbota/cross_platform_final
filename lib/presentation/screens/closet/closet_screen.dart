@@ -1,4 +1,3 @@
-
 // lib/presentation/screens/closet/closet_screen.dart
 
 import 'dart:io';
@@ -118,7 +117,7 @@ class _ClothingCard extends StatelessWidget {
   final VoidCallback onDelete;
   const _ClothingCard({required this.item, required this.onDelete});
 
-@override
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
@@ -242,7 +241,7 @@ class _EmptyCategory extends StatelessWidget {
   final String category;
   const _EmptyCategory({required this.category});
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
@@ -261,3 +260,4 @@ class _EmptyCategory extends StatelessWidget {
     );
   }
 }
+

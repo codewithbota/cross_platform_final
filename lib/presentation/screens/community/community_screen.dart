@@ -7,6 +7,7 @@ import '../../../domain/models/community_post.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/community_provider.dart';
 import '../../providers/database_provider.dart';
+import '../../widgets/clothing_item_thumbnail.dart';
 
 class CommunityScreen extends ConsumerWidget {
   const CommunityScreen({super.key});
@@ -115,6 +116,33 @@ class _PostFeedState extends ConsumerState<_PostFeed> {
                 .read(communityRepositoryProvider)
                 .toggleLike(post.id, newLiked, newLikes, currentUserId);
           },
+          onDelete: currentUserId != null && post.userId == currentUserId
+              ? () async {
+                  final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Delete post'),
+                          content: const Text('Are you sure you want to delete this post?'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+                            TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Delete')),
+                          ],
+                        ),
+                      ) ??
+                      false;
+                  if (!confirmed) return;
+                  try {
+                    await ref.read(firestoreServiceProvider).deletePost(post.id);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post deleted')));
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
+                    }
+                  }
+                }
+              : null,
         );
       },
     );
@@ -124,8 +152,8 @@ class _PostFeedState extends ConsumerState<_PostFeed> {
 class _PostCard extends StatelessWidget {
   final CommunityPost post;
   final VoidCallback onToggleLike;
-  const _PostCard(
-      {required this.post, required this.onToggleLike});
+  final VoidCallback? onDelete;
+  const _PostCard({required this.post, required this.onToggleLike, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +199,13 @@ class _PostCard extends StatelessWidget {
                 Text(post.timeAgo,
                     style: TextStyle(
                         color: Colors.grey[400], fontSize: 12)),
+                if (onDelete != null) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                    onPressed: onDelete,
+                  ),
+                ],
               ],
             ),
           ),
@@ -198,11 +233,26 @@ class _PostCard extends StatelessWidget {
                   mainAxisAlignment:
                       MainAxisAlignment.center,
                   children: [
-                    _BigEmoji(emoji: post.topEmoji),
+                    ClothingItemThumbnail(
+                      imagePath: post.topImagePath,
+                      emoji: post.topEmoji,
+                      size: 64,
+                      borderRadius: 16,
+                    ),
                     const SizedBox(width: 16),
-                    _BigEmoji(emoji: post.bottomEmoji),
+                    ClothingItemThumbnail(
+                      imagePath: post.bottomImagePath,
+                      emoji: post.bottomEmoji,
+                      size: 64,
+                      borderRadius: 16,
+                    ),
                     const SizedBox(width: 16),
-                    _BigEmoji(emoji: post.shoesEmoji),
+                    ClothingItemThumbnail(
+                      imagePath: post.shoesImagePath,
+                      emoji: post.shoesEmoji,
+                      size: 64,
+                      borderRadius: 16,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -273,31 +323,6 @@ class _PostCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _BigEmoji extends StatelessWidget {
-  final String emoji;
-  const _BigEmoji({required this.emoji});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withAlpha((0.06 * 255).round()),
-              blurRadius: 6,
-              offset: const Offset(0, 2))
-        ],
-      ),
-      child: Center(
-          child:
-              Text(emoji, style: const TextStyle(fontSize: 32))),
     );
   }
 }

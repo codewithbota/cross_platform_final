@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../../domain/models/clothing_item.dart';
+import '../../widgets/clothing_item_thumbnail.dart';
 import '../../../domain/models/community_post.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/database_provider.dart';
@@ -60,6 +61,27 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
       final topEmoji = _emojiForCategory('Tops', selectedItems);
       final bottomEmoji = _emojiForCategory('Bottoms', selectedItems);
       final shoesEmoji = _emojiForCategory('Shoes', selectedItems);
+      
+      // ✅ Get image paths from selected items
+      final topImagePath = selectedItems
+          .firstWhere(
+            (item) => item.category == 'Tops',
+            orElse: () => selectedItems.first,
+          )
+          .imagePath;
+      final bottomImagePath = selectedItems
+          .firstWhere(
+            (item) => item.category == 'Bottoms',
+            orElse: () => selectedItems.first,
+          )
+          .imagePath;
+      final shoesImagePath = selectedItems
+          .firstWhere(
+            (item) => item.category == 'Shoes',
+            orElse: () => selectedItems.first,
+          )
+          .imagePath;
+      
       final post = CommunityPost(
         id: const Uuid().v4(),
         userId: user?.uid ?? 'anonymous',
@@ -72,6 +94,9 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         topEmoji: topEmoji,
         bottomEmoji: bottomEmoji,
         shoesEmoji: shoesEmoji,
+        topImagePath: topImagePath,
+        bottomImagePath: bottomImagePath,
+        shoesImagePath: shoesImagePath,
         likes: 0,
         likedBy: const [],
         timeAgo: 'just now',
@@ -310,9 +335,13 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                               mainAxisAlignment:
                                   MainAxisAlignment.center,
                               children: [
-                                Text(item.emoji,
-                                    style: const TextStyle(
-                                        fontSize: 34)),
+                                // ✅ Show real photo if available
+                                ClothingItemThumbnail(
+                                  imagePath: item.imagePath,
+                                  emoji: item.emoji,
+                                  size: 60,
+                                  borderRadius: 10,
+                                ),
                                 const SizedBox(height: 6),
                                 Padding(
                                   padding:
