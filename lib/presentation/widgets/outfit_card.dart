@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../domain/models/outfit.dart';
+import 'clothing_item_thumbnail.dart';
 
 class OutfitCard extends StatelessWidget {
   final Outfit outfit;
-  const OutfitCard({super.key, required this.outfit});
+  final VoidCallback? onDelete;
+  const OutfitCard({super.key, required this.outfit, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+    return Stack(
+      children: [
+        Container(
+          width: 150,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
@@ -27,12 +31,28 @@ class OutfitCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(outfit.topEmoji, style: const TextStyle(fontSize: 24)),
-              Text(outfit.bottomEmoji, style: const TextStyle(fontSize: 24)),
+              ClothingItemThumbnail(
+                imagePath: outfit.topImagePath,
+                emoji: outfit.topEmoji,
+                size: 48,
+                borderRadius: 10,
+              ),
+              const SizedBox(width: 4),
+              ClothingItemThumbnail(
+                imagePath: outfit.bottomImagePath,
+                emoji: outfit.bottomEmoji,
+                size: 48,
+                borderRadius: 10,
+              ),
             ],
           ),
           const SizedBox(height: 4),
-          Text(outfit.shoesEmoji, style: const TextStyle(fontSize: 24)),
+          ClothingItemThumbnail(
+            imagePath: outfit.shoesImagePath,
+            emoji: outfit.shoesEmoji,
+            size: 48,
+            borderRadius: 10,
+          ),
           const SizedBox(height: 8),
           Text(
             outfit.name,
@@ -44,11 +64,23 @@ class OutfitCard extends StatelessWidget {
           if (outfit.isFavorite)
             const Padding(
               padding: EdgeInsets.only(top: 4),
-              child: Icon(Icons.favorite,
-                  color: Color(0xFFB8A9C9), size: 14),
+              child: Icon(Icons.favorite, color: Color(0xFFB8A9C9), size: 14),
             ),
         ],
       ),
-    );
+          ),
+          if (onDelete != null)
+            Positioned(
+              top: 4,
+              right: 4,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                onPressed: onDelete,
+              ),
+            ),
+        ],
+      );
   }
 }
